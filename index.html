@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FoNRox Arcade Universe</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">F</div>
+      <div class="brand-title">FoN<span>Rox</span></div>
+      <div class="online-tag">
+        <span class="pulse-dot"></span>
+        <span id="currentServerLabel">Public Server #1</span>
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <div style="font-size: 12px; font-weight: 800; color: #f59e0b;" id="userBalanceDisplay">
+        1,000 FoNRux
+      </div>
+      <button class="btn-admin" onclick="openAdmin()">
+        👑 Easy Admin
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero Section with 3 Short Lines Describing What the Game Is About -->
+  <section class="hero">
+    <h1>Welcome to FoNRox</h1>
+    <div class="hero-description">
+      <div class="desc-line-1">Multiplayer Arcade Minigames</div>
+      <div class="desc-line-2">Real-Time Server &amp; Global Chat</div>
+      <div class="desc-line-3">FoNRux Rewards &amp; VIP Servers</div>
+    </div>
+  </section>
+
+  <!-- Arcade Games Grid -->
+  <main class="container">
+    <div class="section-title">
+      <span>🎮</span>
+      <span>Select a Minigame</span>
+    </div>
+
+    <div class="games-grid">
+      <!-- Game 1 -->
+      <div class="game-card">
+        <div>
+          <div class="game-card-icon">⚡</div>
+          <div class="game-card-title" style="margin-top: 10px;">Laser Dash</div>
+          <div class="game-card-desc">Cyber runner with neon obstacle dodging and reflex tests.</div>
+        </div>
+        <button class="btn-play" onclick="openGame('laser-dash')">Play Game</button>
+      </div>
+
+      <!-- Game 2 -->
+      <div class="game-card">
+        <div>
+          <div class="game-card-icon">🏓</div>
+          <div class="game-card-title" style="margin-top: 10px;">Neon Cyber Pong</div>
+          <div class="game-card-desc">Retro arcade paddle showdown with physics and spin shots.</div>
+        </div>
+        <button class="btn-play" onclick="openGame('cyber-pong')">Play Game</button>
+      </div>
+
+      <!-- Game 3 -->
+      <div class="game-card">
+        <div>
+          <div class="game-card-icon">🐍</div>
+          <div class="game-card-title" style="margin-top: 10px;">Neon Cyber Snake</div>
+          <div class="game-card-desc">Classic grid snake with neon glow visuals and speed boosts.</div>
+        </div>
+        <button class="btn-play" onclick="openGame('neon-snake')">Play Game</button>
+      </div>
+
+      <!-- Game 4 -->
+      <div class="game-card">
+        <div>
+          <div class="game-card-icon">❌</div>
+          <div class="game-card-title" style="margin-top: 10px;">Tic-Tac-Toe Arena</div>
+          <div class="game-card-desc">Head-to-head tactical strategy with relaxed AI difficulty.</div>
+        </div>
+        <button class="btn-play" onclick="openGame('tic-tac-toe')">Play Game</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Active Game Modal -->
+  <div id="gameModal" class="game-modal" style="display: none;">
+    <div class="game-header">
+      <div class="game-header-left">
+        <!-- Game Icon -->
+        <div class="game-icon-badge">🎮</div>
+        <span id="activeGameTitle" style="font-weight: 800; font-size: 14px;">Mini-Game</span>
+
+        <!-- Next to the game icon, chat icon to open chat -->
+        <button class="btn-chat-icon" onclick="toggleChat()">
+          <span>💬</span>
+          <span>Chat</span>
+        </button>
+      </div>
+
+      <div>
+        <span style="font-size: 11px; color: #94a3b8;">Max 7 Players / Server</span>
+      </div>
+    </div>
+
+    <!-- Viewport with Interactive Canvas -->
+    <div class="game-viewport">
+      <canvas id="gameCanvas" width="480" height="360"></canvas>
+    </div>
+
+    <!-- Bottom Leave Game Button with 2-Step Confirmation -->
+    <div id="bottomLeaveContainer" class="bottom-leave-container"></div>
+  </div>
+
+  <!-- Chat Drawer (Server Chat & Global Chat) -->
+  <div id="chatDrawer" class="chat-drawer" style="display: none;">
+    <div class="chat-tabs">
+      <button id="tabServer" class="chat-tab active" onclick="setChatTab('server')">
+        Server Chat
+      </button>
+      <button id="tabGlobal" class="chat-tab" onclick="setChatTab('global')">
+        Global Chat
+      </button>
+      <button style="background: transparent; color: #fff; padding: 0 12px; font-size: 14px;" onclick="toggleChat()">✕</button>
+    </div>
+
+    <div id="chatMessages" class="chat-messages"></div>
+
+    <div class="chat-input-bar">
+      <input type="text" id="chatInput" placeholder="Send a message..." onkeydown="if(event.key==='Enter') sendChatMessage()" />
+      <button onclick="sendChatMessage()">Send</button>
+    </div>
+  </div>
+
+  <!-- Easy Admin Panel Modal -->
+  <div id="adminModal" class="admin-modal-overlay" style="display: none;">
+    <div class="admin-modal">
+      <div class="admin-header">
+        <h2>👑 Easy Admin Panel</h2>
+        <button style="background: transparent; color: #fff; font-size: 18px;" onclick="closeAdmin()">✕</button>
+      </div>
+
+      <p style="font-size: 12px; color: #cbd5e1;">
+        Simple 1-click controls designed for ease of use. No complicated setup required!
+      </p>
+
+      <!-- VIP Owner-Only Server -->
+      <div class="vip-card">
+        <div>
+          <div style="font-size: 14px; font-weight: 900; color: #f59e0b;">👑 VIP Owner Sanctuary Server</div>
+          <div style="font-size: 11px; color: #cbd5e1; margin-top: 4px;">
+            Only the owner can see this. Only the owner can join this. Appears strictly inside this admin panel!
+          </div>
+        </div>
+        <button class="vip-btn" onclick="joinVipServer()">Join VIP Server</button>
+      </div>
+
+      <!-- FoNRux Currency Generator (Custom Amount & 1-Click) -->
+      <div style="background: rgba(0,0,0,0.3); padding: 14px; border-radius: 12px; border: 1px solid rgba(168,85,247,0.3);">
+        <div style="font-size: 13px; font-weight: 800; margin-bottom: 8px;">💰 Owner FoNRux Generator</div>
+        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+          <input type="number" id="customCurrencyInput" placeholder="Enter any amount..." style="flex: 1; padding: 8px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(168,85,247,0.5); color: #fff; border-radius: 8px; font-size: 12px; font-weight: bold;" value="50000" />
+          <button style="padding: 8px 14px; background: linear-gradient(135deg, #a855f7, #06b6d4); color: #fff; border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer;" onclick="addCustomCurrency()">Grant FoNRux</button>
+        </div>
+        <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">Quick Presets:</div>
+        <div style="display: flex; gap: 8px;">
+          <button style="flex: 1; padding: 8px; background: rgba(168,85,247,0.3); color: #fff; border: 1px solid #a855f7; border-radius: 8px;" onclick="addCurrency(1000)">+1,000</button>
+          <button style="flex: 1; padding: 8px; background: rgba(168,85,247,0.3); color: #fff; border: 1px solid #a855f7; border-radius: 8px;" onclick="addCurrency(5000)">+5,000</button>
+          <button style="flex: 1; padding: 8px; background: linear-gradient(135deg, #a855f7, #6366f1); color: #fff; border-radius: 8px;" onclick="addCurrency(25000)">+25,000</button>
+          <button style="flex: 1; padding: 8px; background: linear-gradient(135deg, #ec4899, #f43f5e); color: #fff; border-radius: 8px;" onclick="addCurrency(1000000)">+1,000,000</button>
+        </div>
+      </div>
+
+      <!-- Auto Win -->
+      <div style="background: rgba(0,0,0,0.3); padding: 14px; border-radius: 12px; border: 1px solid rgba(0,240,255,0.3);">
+        <div style="font-size: 13px; font-weight: 800; margin-bottom: 8px;">⚡ Auto-Win Game Cheat</div>
+        <button style="width: 100%; padding: 10px; background: linear-gradient(135deg, #00f0ff, #3b82f6); color: #000; font-weight: 900; border-radius: 8px;" onclick="triggerWin()">
+          Instant Win (+100 FoNRux &amp; High Score)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
